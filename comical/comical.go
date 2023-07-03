@@ -1,73 +1,65 @@
 package comical
 
 import (
-	"fmt"
 	"net/http"
 )
 
-// HandlerFunc alias http.HandlerFunc, defines the request handler used by comical
-type HandlerFunc http.HandlerFunc
+// HandlerFunc defines the request handler used by comical
+type HandlerFunc func(c *Context)
 
 // Engine implements the interface of http.Handler
 type Engine struct {
-	router map[string]HandlerFunc
+	// router map: key is "METHOD PATTERN", value is HandlerFunc
+	router *router
 }
 
 func New() *Engine {
-	return &Engine{router: make(map[string]HandlerFunc)}
+	return &Engine{
+		router: newRouter(),
+	}
 }
 
 // ServeHTTP makes the Engine implement the interface of http.Handler
 func (e *Engine) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	key := r.Method + " " + r.URL.Path
-	if handler, ok := e.router[key]; ok {
-		handler(w, r)
-	} else {
-		// 404 NOT FOUND
-		_, err := fmt.Fprintf(w, "404 NOT FOUND: %s\n", r.URL)
-		if err != nil {
-			panic(fmt.Errorf("error writing response: %v", err))
-		}
-	}
+	c := newContext(w, r)
+	e.router.handle(c)
 }
 
 // Implements RESTFUL API
 
-// addRouter adds a new router to the Engine
-func (e *Engine) addRouter(method, pattern string, handler HandlerFunc) {
-	key := method + " " + pattern
-	// this will overwrite the old handler if the key already exists
-	e.router[key] = handler
+// addRoute adds a new router to the Engine
+func (e *Engine) addRoute(method, pattern string, handler HandlerFunc) {
+	e.router.addRoute(method, pattern, handler)
 }
 
 // GET adds a new router with GET method to the Engine
 func (e *Engine) GET(pattern string, handler HandlerFunc) {
-	e.addRouter("GET", pattern, handler)
+	e.addRoute("GET", pattern, handler)
 }
 
 // POST adds a new router with POST method to the Engine
 func (e *Engine) POST(pattern string, handler HandlerFunc) {
-	e.addRouter("POST", pattern, handler)
+	e.addRoute("POST", pattern, handler)
 }
 
 // PUT adds a new router with PUT method to the Engine
 func (e *Engine) PUT(pattern string, handler HandlerFunc) {
-	e.addRouter("PUT", pattern, handler)
+	e.addRoute("PUT", pattern, handler)
 }
 
 // DELETE adds a new router with DELETE method to the Engine
 func (e *Engine) DELETE(pattern string, handler HandlerFunc) {
-	e.addRouter("DELETE", pattern, handler)
+	e.addRoute("DELETE", pattern, handler)
 }
 
 // OPTIONS adds a new router with OPTIONS method to the Engine
 func (e *Engine) OPTIONS(pattern string, handler HandlerFunc) {
-	e.addRouter("OPTIONS", pattern, handler)
+	e.addRoute("OPTIONS", pattern, handler)
 }
 
 // HEAD adds a new router with HEAD method to the Engine
 func (e *Engine) HEAD(pattern string, handler HandlerFunc) {
-	e.addRouter("HEAD", pattern, handler)
+	e.addRoute("HEAD", pattern, handler)
 }
 
 // TODO: implement more HTTP methods
