@@ -10,14 +10,14 @@ This project mainly by the blog [7days-golang - Gee](https://geektutu.com/post/g
 
 **UNDER DEVELOPMENT!!! Feathers may change**
 ## Features
-- [ ] Router
+- [x] RESTful API
+- [x] Router
 - [ ] Group Control
 - [ ] Middleware
 - [ ] Template
 - [ ] Logger
 - [ ] Error Handling
 - [ ] Static File Server
-- [ ] RESTful API
 - [ ] Unit Test
 - [ ] Graceful Shutdown
 - [ ] Panic Recover
