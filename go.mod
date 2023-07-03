@@ -1,5 +1,3 @@
-module github.com/kiritoxkiriko/comical
+module example
 
 go 1.20
-
-replace github.com/kiritoxkiriko/comical v0.0.0 => ./comical

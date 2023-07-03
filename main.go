@@ -2,13 +2,12 @@ package main
 
 import (
 	"fmt"
-	"github.com/kiritoxkiriko/comical/comical"
+	"github.com/kiritoxkiriko/comical"
 	"net/http"
 )
 
 func main() {
 	c := comical.New()
-
 	c.GET("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "URL.Path = %q\n", r.URL.Path)
 	})

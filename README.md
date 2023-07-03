@@ -6,7 +6,6 @@ This project mainly by the blog [7days-golang - Gee](https://geektutu.com/post/g
 
 ## Getting Started
 ```go
-// TODO
 ```
 
 **UNDER DEVELOPMENT!!! Feathers may change**
