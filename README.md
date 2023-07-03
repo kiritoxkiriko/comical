@@ -8,7 +8,7 @@ This project mainly by the blog [7days-golang - Gee](https://geektutu.com/post/g
 ```go
 ```
 
-**UNDER DEVELOPMENT!!! Feathers may change**
+**UNDER DEVELOPMENT!!! Feature may change**
 ## Features
 - [x] RESTful API
 - [x] Router
