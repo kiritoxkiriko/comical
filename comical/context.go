@@ -57,7 +57,7 @@ func (c *Context) Query(key string) (value string) {
 
 // Status sets the response status code
 func (c *Context) Status(code int) {
-	code = c.StatusCode
+	c.StatusCode = code
 	c.Writer.WriteHeader(code)
 }
 

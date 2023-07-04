@@ -7,16 +7,29 @@ import (
 )
 
 func main() {
-	c := comical.New()
-	c.GET("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "URL.Path = %q\n", r.URL.Path)
+	r := comical.New()
+
+	r.GET("/", func(c *comical.Context) {
+		c.HTML(http.StatusOK, "<h1>Welcome to Comical World!</h1>")
 	})
 
-	c.GET("/hello", func(w http.ResponseWriter, r *http.Request) {
-		for k, v := range r.Header {
-			fmt.Fprintf(w, "Header[%q] = %q\n", k, v)
+	r.GET("/hello", func(c *comical.Context) {
+		name := c.Query("name")
+		if name == "" {
+			name = "Guest"
 		}
+		c.String(http.StatusOK, fmt.Sprintf("Hello %s, you're at %s", name, c.Path))
 	})
 
-	c.Run(":8080")
+	r.POST("/login", func(c *comical.Context) {
+		user, passwd := c.PostForm("user"), c.Query("passwd")
+		c.JSON(http.StatusOK, comical.H{
+			"user":   user,
+			"passwd": passwd,
+		})
+	})
+
+	if err := r.Run(":8080"); err != nil {
+		panic(err)
+	}
 }
