@@ -5,28 +5,36 @@ import (
 	"net/http"
 )
 
-// router is a request multiplexer for comical
-type router struct {
+// Router is the interface that wraps the Handle method
+type Router interface {
+	// Handle handles http requests by Context
+	Handle(c *Context)
+	// AddRoute adds a new route to the defaultRouter
+	AddRoute(method, pattern string, handler HandlerFunc)
+}
+
+// DefaultRouter is a request multiplexer for comical
+type DefaultRouter struct {
 	// handlers stores the mapping of request path to handler
 	handlers map[string]HandlerFunc
 }
 
-// newRouter creates a new router object
-func newRouter() *router {
-	return &router{
+// NewDefaultRouter creates a new defaultRouter object
+func NewDefaultRouter() *DefaultRouter {
+	return &DefaultRouter{
 		handlers: map[string]HandlerFunc{},
 	}
 }
 
-// addRoute adds a new route to the router
-func (r *router) addRoute(method, pattern string, handler HandlerFunc) {
+// AddRoute adds a new route to the defaultRouter
+func (r *DefaultRouter) AddRoute(method, pattern string, handler HandlerFunc) {
 	log.Printf("Route %4s - %s", method, pattern)
 	key := method + "-" + pattern
 	r.handlers[key] = handler
 }
 
-// handle handles http requests by Context
-func (r *router) handle(c *Context) {
+// Handle handles http requests by Context
+func (r *DefaultRouter) Handle(c *Context) {
 	key := c.Method + "-" + c.Path
 	if handler, ok := r.handlers[key]; ok {
 		handler(c)

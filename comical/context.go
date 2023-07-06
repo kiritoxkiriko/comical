@@ -22,6 +22,8 @@ type Context struct {
 	Path string
 	// Method is the HTTP method of the request.
 	Method string
+	// Params is the parameters of the request.
+	Params map[string]string
 	// StatusCode is the HTTP status code of the request.
 	StatusCode int
 }
@@ -52,6 +54,11 @@ func (c *Context) PostForm(key string) (value string) {
 // Query sets the request query value by key
 func (c *Context) Query(key string) (value string) {
 	value = c.Req.URL.Query().Get(key)
+	return
+}
+
+func (c *Context) Param(key string) (value string) {
+	value, _ = c.Params[key]
 	return
 }
 
