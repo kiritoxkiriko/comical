@@ -7,43 +7,33 @@ import (
 )
 
 func main() {
-	r := comical.New(comical.NewTrieRouter())
+	r := comical.New()
 
-	r.GET("/", func(c *comical.Context) {
-		c.HTML(http.StatusOK, "<h1>Welcome to Comical World!</h1>")
+	r.GET("/index", func(c *comical.Context) {
+		c.HTML(http.StatusOK, "<hi>Hi, this is a comical world</hi>")
 	})
 
-	// expect /hello?name=kirito
-	r.GET("/hello", func(c *comical.Context) {
-		name := c.Query("name")
-		if name == "" {
-			name = "Guest"
-		}
-		c.String(http.StatusOK, fmt.Sprintf("Hello %s, you're at %s", name, c.Path))
-	})
-
-	// expect /hello/kirito
-	r.GET("/hello/:name", func(c *comical.Context) {
-		name := c.Param("name")
-		if name == "" {
-			name = "Guest"
-		}
-		c.String(http.StatusOK, fmt.Sprintf("Hello %s, you're at %s", name, c.Path))
-	})
-
-	r.POST("/login", func(c *comical.Context) {
-		user, passwd := c.PostForm("user"), c.Query("passwd")
-		c.JSON(http.StatusOK, comical.H{
-			"user":   user,
-			"passwd": passwd,
+	v1 := r.Group("/v1")
+	{
+		v1.GET("/", func(c *comical.Context) {
+			c.String(http.StatusOK, "Hello v1")
 		})
-	})
-
-	r.GET("/file/*filepath", func(c *comical.Context) {
-		c.JSON(http.StatusOK, comical.H{
-			"filepath": c.Param("filepath"),
+		v1.GET("/hello", func(c *comical.Context) {
+			name := c.Query("name")
+			c.String(http.StatusOK, fmt.Sprintf("hello %s, u r at %s\n", name, c.Path))
 		})
-	})
+	}
+
+	v2 := r.Group("/v2")
+	{
+		v2.POST("/login", func(c *comical.Context) {
+			username, password := c.PostForm("username"), c.PostForm("password")
+			c.JSON(http.StatusOK, comical.H{
+				"username": username,
+				"password": password,
+			})
+		})
+	}
 
 	if err := r.Run(":8080"); err != nil {
 		panic(err)

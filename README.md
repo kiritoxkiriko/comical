@@ -12,7 +12,7 @@ This project mainly by the blog [7days-golang - Gee](https://geektutu.com/post/g
 ## Features
 - [x] RESTful API
 - [x] Router
-- [ ] Group Control
+- [x] Group Control
 - [ ] Middleware
 - [ ] Template
 - [ ] Logger
