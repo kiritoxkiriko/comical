@@ -26,6 +26,9 @@ type Context struct {
 	Params map[string]string
 	// StatusCode is the HTTP status code of the request.
 	StatusCode int
+	// middleware
+	handlers []HandlerFunc
+	index    int
 }
 
 // newContext creates a new Context object
@@ -37,7 +40,32 @@ func newContext(w http.ResponseWriter, r *http.Request) *Context {
 		Method: r.Method,
 		// omit status code for now
 		StatusCode: 0,
+		index:      -1,
 	}
+}
+
+// Next call this function inside middleware, will jump pre request part, and jump intoc post request part
+func (c *Context) Next() {
+	c.index++
+	l := len(c.handlers)
+	for c.index < l {
+		c.handlers[c.index](c)
+		// if some function not call c.Next. then this will not stuck
+		c.index++
+	}
+}
+
+// Fail fail current and all next handler
+func (c *Context) Fail(code int, err string) {
+	// this will omit next handler and return
+	c.Abort()
+	c.JSON(code, H{
+		"message": err,
+	})
+}
+
+func (c *Context) Abort() {
+	c.index = len(c.handlers)
 }
 
 // Err returns the error message

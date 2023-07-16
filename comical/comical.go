@@ -2,6 +2,7 @@ package comical
 
 import (
 	"net/http"
+	"strings"
 )
 
 // HandlerFunc defines the request handler used by comical
@@ -32,7 +33,15 @@ func (e *Engine) Group(prefix string) *RouteGroup {
 
 // ServeHTTP makes the Engine implement the interface of http.Handler
 func (e *Engine) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	var middlewares []HandlerFunc
+	for _, group := range e.groups {
+		// only apply group middleware to matched group
+		if strings.HasPrefix(r.URL.Path, group.prefix) {
+			middlewares = append(middlewares, group.middlewares...)
+		}
+	}
 	c := newContext(w, r)
+	c.handlers = middlewares
 	e.handle(c)
 }
 

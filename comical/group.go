@@ -7,7 +7,7 @@ type RouteGroup struct {
 	*router
 	prefix      string
 	parent      *RouteGroup
-	middlewares []*HandlerFunc
+	middlewares []HandlerFunc
 }
 
 func newRootGroup() *RouteGroup {
@@ -24,6 +24,11 @@ func (g *RouteGroup) Group(prefix string) *RouteGroup {
 		parent: g,
 		router: g.router,
 	}
+}
+
+// Use apply middleware into some group
+func (g *RouteGroup) Use(middlewares ...HandlerFunc) {
+	g.middlewares = append(g.middlewares, middlewares...)
 }
 
 // addRoute override method of router

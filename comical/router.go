@@ -147,14 +147,21 @@ func (r *router) parsePattern(pattern string) []string {
 // Handle handles http requests by Context
 func (r *router) handle(c *Context) {
 	//r.trieRoots[c.Method].travel(0)
+	// treat router also like a middleware
 	n, params := r.getRoute(c.Method, c.Path)
+	var handler HandlerFunc
 	if n != nil {
 		c.Params = params
 		key := c.Method + "-" + n.pattern
-		r.handlers[key](c)
+		handler = r.handlers[key]
 		return
+	} else {
+		handler = func(c *Context) {
+			c.String(http.StatusNotFound, "404 NOT FOUND: %s\n", c.Path)
+		}
 	}
-	c.String(http.StatusNotFound, "404 NOT FOUND: %s\n", c.Path)
+	c.handlers = append(c.handlers, handler)
+	c.Next()
 }
 
 // AddRoute adds a route to the trie router
