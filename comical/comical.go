@@ -41,7 +41,10 @@ func (e *Engine) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	c := newContext(w, r)
+	// add middleware to context
 	c.handlers = middlewares
+	// add templates to context
+	c.templates = e.htmlTemplates
 	e.handle(c)
 }
 

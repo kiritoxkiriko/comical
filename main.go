@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"github.com/kiritoxkiriko/comical"
 	"github.com/kiritoxkiriko/comical/middleware"
+	"html/template"
 	"net/http"
+	"time"
 )
 
 func main() {
@@ -15,8 +17,21 @@ func main() {
 		middleware.Logger(nil),
 	)
 
+	// load template
+	formatAsDate := func(t time.Time) string {
+		return t.Format("2006-01-02 15:04:05")
+	}
+	r.SetFuncMap(template.FuncMap{
+		"FormatAsDate": formatAsDate,
+	})
+	r.LoadHTMLTemplates("templates/*")
+	r.Static("/assets", "./static")
+
 	r.GET("/index", func(c *comical.Context) {
-		c.HTML(http.StatusOK, "<hi>Hi, this is a comical world</hi>")
+		c.HTML(http.StatusOK, "index.tmpl", comical.H{
+			"now":   time.Now(),
+			"title": "comical",
+		})
 	})
 
 	v1 := r.Group("/v1")

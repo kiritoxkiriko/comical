@@ -1,0 +1,15 @@
+<html>
+<style>
+.load {
+  display: none;
+}
+</style>
+<link rel="stylesheet" href="/assets/css/index.css">
+<body>
+    <p>hello, {{.title}}</p>
+    <p>Date: {{.now | FormatAsDate}}</p>
+    <p class="load" style="color: green;">css loaded!</p>
+    <p class="unload" style="color: red;">css unloaded!</p>
+</body>
+</html>
+

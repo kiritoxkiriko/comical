@@ -1,13 +1,14 @@
 package comical
 
 import (
+	"html/template"
 	"log"
 	"net/http"
 	"path"
 )
 
 const (
-	filePathPattern = "filepath_comical"
+	filePathPattern = "*filepath"
 )
 
 type RouteGroup struct {
@@ -15,8 +16,10 @@ type RouteGroup struct {
 	*router
 	prefix string
 	// not currently in use
-	parent      *RouteGroup
-	middlewares []HandlerFunc
+	parent        *RouteGroup
+	middlewares   []HandlerFunc
+	htmlTemplates *template.Template // for html render
+	funcMap       template.FuncMap   // for html render
 }
 
 func newRootGroup() *RouteGroup {
@@ -33,6 +36,8 @@ func (g *RouteGroup) Group(prefix string) *RouteGroup {
 		prefix: prefix,
 		parent: g,
 		router: g.router,
+		// set a empty funcMap in case nil panic
+		funcMap: make(template.FuncMap),
 	}
 }
 
@@ -79,7 +84,7 @@ func (g *RouteGroup) HEAD(pattern string, handler HandlerFunc) {
 	g.addRoute("HEAD", pattern, handler)
 }
 
-// support static file
+// for static file
 
 // createStaticHandler create static handler
 func (g *RouteGroup) createStaticHandler(relPath string, fs http.FileSystem) HandlerFunc {
@@ -108,4 +113,16 @@ func (g *RouteGroup) Static(relPath, root string) {
 	pattern := path.Join(relPath, filePathPattern)
 	// register a static handler
 	g.GET(pattern, handler)
+}
+
+// for html template
+
+// SetFuncMap set custom render function for template, only support for root group
+func (g *RouteGroup) SetFuncMap(funcMap template.FuncMap) {
+	g.funcMap = funcMap
+}
+
+// LoadHTMLTemplates load html template, only support for root group
+func (g *RouteGroup) LoadHTMLTemplates(pattern string) {
+	g.htmlTemplates = template.Must(template.New("").Funcs(g.funcMap).ParseGlob(pattern))
 }

@@ -3,6 +3,7 @@ package comical
 import (
 	"encoding/json"
 	"fmt"
+	"html/template"
 	"net/http"
 )
 
@@ -29,6 +30,8 @@ type Context struct {
 	// middleware
 	handlers []HandlerFunc
 	index    int
+	// for template
+	templates *template.Template
 }
 
 // newContext creates a new Context object
@@ -135,11 +138,14 @@ func (c *Context) Data(code int, data []byte) {
 }
 
 // HTML sets the response body with html string
-func (c *Context) HTML(code int, html string) {
+func (c *Context) HTML(code int, name string, data any) {
 	c.SetHeader("Content-Type", "text/html")
 	c.Status(code)
-	_, err := c.Writer.Write([]byte(html))
-	if err != nil {
-		c.Err(err)
+	if c.templates == nil {
+		c.Fail(500, "HTML template unloaded")
+		return
+	}
+	if err := c.templates.ExecuteTemplate(c.Writer, name, data); err != nil {
+		c.Fail(500, err.Error())
 	}
 }
