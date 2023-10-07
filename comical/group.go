@@ -1,11 +1,20 @@
 package comical
 
-import "log"
+import (
+	"log"
+	"net/http"
+	"path"
+)
+
+const (
+	filePathPattern = "filepath_comical"
+)
 
 type RouteGroup struct {
 	// router extend from router
 	*router
-	prefix      string
+	prefix string
+	// not currently in use
 	parent      *RouteGroup
 	middlewares []HandlerFunc
 }
@@ -17,6 +26,7 @@ func newRootGroup() *RouteGroup {
 	}
 }
 
+// Group create a group that match prefix
 func (g *RouteGroup) Group(prefix string) *RouteGroup {
 	prefix = prefix + g.prefix
 	return &RouteGroup{
@@ -69,4 +79,33 @@ func (g *RouteGroup) HEAD(pattern string, handler HandlerFunc) {
 	g.addRoute("HEAD", pattern, handler)
 }
 
-// TODO: implement more HTTP methods
+// support static file
+
+// createStaticHandler create static handler
+func (g *RouteGroup) createStaticHandler(relPath string, fs http.FileSystem) HandlerFunc {
+	// absPath for root router
+	absPath := path.Join(g.prefix, relPath)
+	// remove router path prefix to get real file path
+	fileServer := http.StripPrefix(absPath, http.FileServer(fs))
+
+	handler := func(c *Context) {
+		filePath := c.Param(filePathPattern)
+		// check file permission first
+		if _, err := fs.Open(filePath); err != nil {
+			// if error return 404
+			c.Status(http.StatusNotFound)
+			return
+		}
+		// use builtin file server
+		fileServer.ServeHTTP(c.Writer, c.Req)
+	}
+	return handler
+}
+
+// Static map a file path root to relPath at router
+func (g *RouteGroup) Static(relPath, root string) {
+	handler := g.createStaticHandler(relPath, http.Dir(root))
+	pattern := path.Join(relPath, filePathPattern)
+	// register a static handler
+	g.GET(pattern, handler)
+}

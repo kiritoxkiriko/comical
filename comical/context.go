@@ -85,6 +85,7 @@ func (c *Context) Query(key string) (value string) {
 	return
 }
 
+// Param gets param from route path, support /a/:key/c, /a/*key
 func (c *Context) Param(key string) (value string) {
 	value, _ = c.Params[key]
 	return
