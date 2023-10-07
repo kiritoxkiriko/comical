@@ -44,7 +44,7 @@ func newContext(w http.ResponseWriter, r *http.Request) *Context {
 	}
 }
 
-// Next call this function inside middleware, will jump pre request part, and jump intoc post request part
+// Next call this function inside middleware, will jump pre request part, and jump into post request part
 func (c *Context) Next() {
 	c.index++
 	l := len(c.handlers)
