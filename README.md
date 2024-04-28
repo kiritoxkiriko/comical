@@ -13,14 +13,14 @@ This project mainly by the blog [7days-golang - Gee](https://geektutu.com/post/g
 - [x] RESTful API
 - [x] Router
 - [x] Group Control
-- [ ] Middleware
-- [ ] Template
-- [ ] Logger
-- [ ] Error Handling
-- [ ] Static File Server
+- [x] Middleware
+- [x] Template
+- [x] Logger
+- [x] Error Handling
+- [x] Static File Server
 - [ ] Unit Test
 - [ ] Graceful Shutdown
-- [ ] Panic Recover
+- [x] Panic Recover
 - [ ] Configuration
 
 ## License
