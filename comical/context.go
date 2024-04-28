@@ -58,7 +58,7 @@ func (c *Context) Next() {
 	}
 }
 
-// Fail fail current and all next handler
+// Fail current and all next handler
 func (c *Context) Fail(code int, err string) {
 	// this will omit next handler and return
 	c.Abort()
@@ -67,6 +67,7 @@ func (c *Context) Fail(code int, err string) {
 	})
 }
 
+// Abort current handler, but not return any
 func (c *Context) Abort() {
 	c.index = len(c.handlers)
 }
