@@ -2,11 +2,12 @@ package main
 
 import (
 	"fmt"
-	"github.com/kiritoxkiriko/comical"
-	"github.com/kiritoxkiriko/comical/middleware"
 	"html/template"
 	"net/http"
 	"time"
+
+	"github.com/kiritoxkiriko/comical"
+	"github.com/kiritoxkiriko/comical/middleware"
 )
 
 func main() {
