@@ -5,7 +5,9 @@ Comical is a lite web framework, focus on web serving and web application develo
 This project mainly by the blog [7days-golang - Gee](https://geektutu.com/post/gee.html), truly thank for the author.
 
 ## Getting Started
-```go
+install the package
+```shell
+go get github.com/kiritoxkiriko/comical@v0.0.2
 ```
 
 **UNDER DEVELOPMENT!!! Feature may change**
