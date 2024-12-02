@@ -29,26 +29,26 @@ func main() {
     
     // use build-in middleware
     r.Use(
-      middleware.Recovery(logger),
-      middleware.Logger(logger),
+		middleware.Recovery(logger),
+		middleware.Logger(logger),
     )
 
     // register hello route
     r.GET("/hello", func(c *comical.Context) {
-  			name := c.Query("name")
-  			c.String(http.StatusOK, fmt.Sprintf("hello %s, u r at %s\n", name, c.Path))
-		})
+        name := c.Query("name")
+        c.String(http.StatusOK, fmt.Sprintf("hello %s, u r at %s\n", name, c.Path))
+    })
 
     // serve at localhost:8080
     if err := r.Run(":8080"); err != nil {
-		    logger.Fatal("failed to start")
-	  }
+        logger.Fatal("failed to start")
+    }
 }
 
 ```
 
 ## Usage
-See [examples](https://github.com/kiritoxkiriko/comical/tree/main/example),
+See [examples](https://github.com/kiritoxkiriko/comical/tree/main/example)
 
 ## Features
 - [x] RESTful API
